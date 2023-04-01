@@ -1,29 +1,35 @@
 use std::fmt::Debug;
 
 #[derive(Clone, PartialEq, Eq)]
-pub struct BitmapSet {
-    data: [u8; 32],
+pub struct BitmapSet<const SIZE: usize = 32> {
+    data: [u8; SIZE],
 }
 
-impl BitmapSet {
+impl<const SIZE: usize> BitmapSet<SIZE> {
+    const MAXVAL: u8 = (SIZE * 8 - 1) as u8;
+
     pub fn new() -> Self {
-        Self { data: [0; 32] }
+        assert!(SIZE <= 32);
+        Self { data: [0; SIZE] }
     }
 
     pub fn contains(&self, value: u8) -> bool {
+        assert!(value <= Self::MAXVAL);
         *self.byte(value) & Self::mask(value) != 0
     }
 
     pub fn insert(&mut self, value: u8) {
+        assert!(value <= Self::MAXVAL);
         *self.byte_mut(value) |= Self::mask(value);
     }
 
     pub fn remove(&mut self, value: u8) {
+        assert!(value <= Self::MAXVAL);
         *self.byte_mut(value) &= !Self::mask(value);
     }
 
     pub fn clear(&mut self) {
-        self.data = [0; 32];
+        self.data = [0; SIZE];
     }
 
     pub fn intersection(&self, other: &Self) -> Self {
@@ -75,7 +81,7 @@ impl BitmapSet {
     }
 
     pub fn is_empty(&self) -> bool {
-        self.data == [0; 32]
+        self.data == [0; SIZE]
     }
 
     pub fn is_disjoint(&self, other: &Self) -> bool {
@@ -90,7 +96,7 @@ impl BitmapSet {
         other.is_subset(self)
     }
 
-    pub fn iter(&self) -> Iter {
+    pub fn iter(&self) -> Iter<SIZE> {
         Iter { set: self, value: Some(0) }
     }
 
@@ -111,23 +117,23 @@ impl BitmapSet {
     }
 }
 
-impl Debug for BitmapSet {
+impl<const SIZE: usize> Debug for BitmapSet<SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let seq = self.iter()
             .map(|v| v.to_string())
             .collect::<Vec<String>>()
             .join(", ");
-        write!(f, "ByteSet {{{}}}", seq)
+        write!(f, "BitmapSet {{{}}}", seq)
     }
 }
 
-impl From<&[u8]> for BitmapSet {
+impl<const SIZE: usize> From<&[u8]> for BitmapSet<SIZE> {
     fn from(slice: &[u8]) -> Self {
         slice.iter().collect()
     }
 }
 
-impl FromIterator<u8> for BitmapSet {
+impl<const SIZE: usize> FromIterator<u8> for BitmapSet<SIZE> {
     fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
         let mut set = Self::new();
         for item in iter {
@@ -137,7 +143,7 @@ impl FromIterator<u8> for BitmapSet {
     }
 }
 
-impl<'a> FromIterator<&'a u8> for BitmapSet {
+impl<'a, const SIZE: usize> FromIterator<&'a u8> for BitmapSet<SIZE> {
     fn from_iter<T: IntoIterator<Item = &'a u8>>(iter: T) -> Self {
         iter.into_iter().copied().collect()
     }
@@ -145,18 +151,22 @@ impl<'a> FromIterator<&'a u8> for BitmapSet {
 
 
 
-pub struct Iter<'a> {
-    set: &'a BitmapSet,
+pub struct Iter<'a, const SIZE: usize> {
+    set: &'a BitmapSet<SIZE>,
     value: Option<u8>,
 }
 
-impl<'a> Iter<'a> {
+impl<'a, const SIZE: usize> Iter<'a, SIZE> {
+    const MAXVAL: u8 = (SIZE * 8 - 1) as u8;
+
     fn advance(&mut self) {
-        self.value = self.value.and_then(|v| v.checked_add(1));
+        self.value = self.value.and_then(|v| {
+            if v < Self::MAXVAL { Some(v + 1) } else { None }
+        })
     }
 }
 
-impl<'a> Iterator for Iter<'a> {
+impl<'a, const SIZE: usize> Iterator for Iter<'a, SIZE> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {

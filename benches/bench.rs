@@ -7,7 +7,7 @@ pub fn bench_collect(c: &mut Criterion) {
     let mut group = c.benchmark_group("collect");
     let range = &(0..=255);
     group.bench_function("BitmapSet", |b| b.iter(|| {
-        range.clone().collect::<BitmapSet>()
+        range.clone().collect::<BitmapSet<32>>()
     }));
     group.bench_function("BTreeSet", |b| b.iter(|| {
         range.clone().collect::<BTreeSet<u8>>()
@@ -44,7 +44,11 @@ pub fn bench_iter_long(c: &mut Criterion) {
 pub fn bench_iter_short(c: &mut Criterion) {
     let mut group = c.benchmark_group("iter_short");
     let set: BitmapSet = (0..10).collect();
-    group.bench_function("BitmapSet", |b| b.iter(|| {
+    group.bench_function("BitmapSet<32>", |b| b.iter(|| {
+        set.iter().count()
+    }));
+    let set: BitmapSet<2> = (0..10).collect();
+    group.bench_function("BitmapSet<2>", |b| b.iter(|| {
         set.iter().count()
     }));
     let set: BTreeSet<u8> = (0..10).collect();
