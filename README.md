@@ -29,4 +29,4 @@ It is ridiculously simple: just a sequence of bits, each representing a presence
 - Difference - bitwise AND with complement
 - Subset/superset check - equality check with intersection/union
 
-See [benches/bench.rs] for benchmarks in comparison with BTreeSet.
+See [benchmarks](benches/bench.rs) and run them (`cargo bench`) for performance comparison with BTreeSet.
