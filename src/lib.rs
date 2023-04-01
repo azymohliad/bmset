@@ -1,11 +1,11 @@
 use std::fmt::Debug;
 
 #[derive(Clone, PartialEq, Eq)]
-pub struct ByteSet {
+pub struct BitmapSet {
     data: [u8; 32],
 }
 
-impl ByteSet {
+impl BitmapSet {
     pub fn new() -> Self {
         Self { data: [0; 32] }
     }
@@ -111,7 +111,7 @@ impl ByteSet {
     }
 }
 
-impl Debug for ByteSet {
+impl Debug for BitmapSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let seq = self.iter()
             .map(|v| v.to_string())
@@ -121,13 +121,13 @@ impl Debug for ByteSet {
     }
 }
 
-impl From<&[u8]> for ByteSet {
+impl From<&[u8]> for BitmapSet {
     fn from(slice: &[u8]) -> Self {
         slice.iter().collect()
     }
 }
 
-impl FromIterator<u8> for ByteSet {
+impl FromIterator<u8> for BitmapSet {
     fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
         let mut set = Self::new();
         for item in iter {
@@ -137,7 +137,7 @@ impl FromIterator<u8> for ByteSet {
     }
 }
 
-impl<'a> FromIterator<&'a u8> for ByteSet {
+impl<'a> FromIterator<&'a u8> for BitmapSet {
     fn from_iter<T: IntoIterator<Item = &'a u8>>(iter: T) -> Self {
         iter.into_iter().copied().collect()
     }
@@ -146,7 +146,7 @@ impl<'a> FromIterator<&'a u8> for ByteSet {
 
 
 pub struct Iter<'a> {
-    set: &'a ByteSet,
+    set: &'a BitmapSet,
     value: Option<u8>,
 }
 
