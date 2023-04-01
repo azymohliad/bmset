@@ -1,9 +1,5 @@
 use std::fmt::Debug;
 
-#[cfg(test)]
-mod test;
-
-
 #[derive(Clone, PartialEq, Eq)]
 pub struct ByteSet {
     data: [u8; 32],

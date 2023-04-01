@@ -1,4 +1,4 @@
-use crate::ByteSet;
+use byteset::ByteSet;
 
 #[test]
 fn test_contains() {
