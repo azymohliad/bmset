@@ -12,6 +12,13 @@ fn test_contains() {
 }
 
 #[test]
+fn test_len() {
+    assert_eq!(4, BitmapSet::<32>::from([1, 8, 52, 220].as_slice()).len());
+    assert_eq!(0, BitmapSet::<32>::new().len());
+    assert_eq!(256, BitmapSet::<32>::new().complement().len());
+}
+
+#[test]
 fn test_insert() {
     let mut set = BitmapSet::<32>::new();
     set.insert(1);

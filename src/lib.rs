@@ -1,7 +1,7 @@
 #![no_std]
 use core::fmt::Debug;
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct BitmapSet<const SIZE: usize = 32> {
     data: [u8; SIZE],
 }
@@ -12,6 +12,10 @@ impl<const SIZE: usize> BitmapSet<SIZE> {
     pub fn new() -> Self {
         assert!(SIZE <= 32);
         Self { data: [0; SIZE] }
+    }
+
+    pub fn len(&self) -> usize {
+        self.data.iter().map(|v| v.count_ones() as usize).sum()
     }
 
     pub fn contains(&self, value: u8) -> bool {
@@ -147,14 +151,14 @@ impl<'a, const SIZE: usize> FromIterator<&'a u8> for BitmapSet<SIZE> {
 }
 
 
-
+#[derive(Clone)]
 pub struct Iter<'a, const SIZE: usize> {
     set: &'a BitmapSet<SIZE>,
     value: Option<u8>,
 }
 
 impl<'a, const SIZE: usize> Iter<'a, SIZE> {
-    const MAXVAL: u8 = (SIZE * 8 - 1) as u8;
+    const MAXVAL: u8 = BitmapSet::<SIZE>::MAXVAL;
 
     fn advance(&mut self) {
         self.value = self.value.and_then(|v| {
