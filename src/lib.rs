@@ -120,15 +120,7 @@ impl<const SIZE: usize> BitmapSet<SIZE> {
 
 impl<const SIZE: usize> Debug for BitmapSet<SIZE> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "BitmapSet {{")?;
-        let mut iter = self.iter();
-        if let Some(v) = iter.next() {
-            write!(f, "{v}")?;
-        }
-        for v in iter {
-            write!(f, ", {v}")?;
-        }
-        write!(f, "}}")
+        f.debug_set().entries(self.iter()).finish()
     }
 }
 
