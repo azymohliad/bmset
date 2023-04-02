@@ -2,7 +2,7 @@
 
 BitmapSet - compact stack-allocated ordered set for small numbers.
 
-It provides a similar API to standard [BTreeSet](https://doc.rust-lang.org/std/collections/struct.BTreeSet.html), but limited to small numbers only, and more efficient for this use-case.
+It provides a similar API to standard [BTreeSet](https://doc.rust-lang.org/std/collections/struct.BTreeSet.html), but can store `u8` only, and is more efficient for this use-case.
 
 Defining features:
 - Compact
@@ -10,7 +10,8 @@ Defining features:
 - No allocations
 - No dependencies
 - `no_std`
-- Very simple
+- `u8` only
+- Dumb (stupidly simple implementation)
 
 ## Usage
 
