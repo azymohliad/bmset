@@ -1,4 +1,5 @@
-use std::fmt::Debug;
+#![no_std]
+use core::fmt::Debug;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct BitmapSet<const SIZE: usize = 32> {
@@ -118,12 +119,16 @@ impl<const SIZE: usize> BitmapSet<SIZE> {
 }
 
 impl<const SIZE: usize> Debug for BitmapSet<SIZE> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let seq = self.iter()
-            .map(|v| v.to_string())
-            .collect::<Vec<String>>()
-            .join(", ");
-        write!(f, "BitmapSet {{{}}}", seq)
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "BitmapSet {{")?;
+        let mut iter = self.iter();
+        if let Some(v) = iter.next() {
+            write!(f, "{v}")?;
+        }
+        for v in iter {
+            write!(f, ", {v}")?;
+        }
+        write!(f, "}}")
     }
 }
 
